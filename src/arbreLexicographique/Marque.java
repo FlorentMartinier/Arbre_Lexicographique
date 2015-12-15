@@ -8,8 +8,6 @@ public class Marque extends NoeudAbstrait {
 
 	public Marque(NoeudAbstrait frere) {
 		super(frere);
-//		if (frere == null)
-//			throw new ArbreLexicographiqueException("frere null interdit");
 	}
 
 	@Override
@@ -30,7 +28,7 @@ public class Marque extends NoeudAbstrait {
 	@Override
 	public NoeudAbstrait ajout(String s) {
 		if (s.isEmpty())
-			throw new ModificationImpossibleException("Ajout impossible : mot d�j� pr�sent");
+			throw new ModificationImpossibleException("Ajout impossible : mot deja present");
 		frere = frere.ajout(s);
 		return this;
 	}

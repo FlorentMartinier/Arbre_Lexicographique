@@ -19,13 +19,21 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+import java.awt.TextField;
+import java.awt.Panel;
+import java.awt.GridLayout;
+import javax.swing.SwingConstants;
 
 public class ArbreGraphique extends ArbreLexicographique {
 
 	JFrame frame;
-	private JTextField textField;
+	private JTextField texteRecherche;
 	private ArbreLexicographique arbre;
 	private JTree tree;
+	private JLabel lblNombreDeMots;
+	private JLabel lblNewLabel_1;
 
 	/**
 	 * Launch the application.
@@ -55,76 +63,112 @@ public class ArbreGraphique extends ArbreLexicographique {
 	 */
 	private void initialize(ArbreLexicographique arbre) {
 		this.arbre = arbre;
-		
+
 		TextArea textArea = new TextArea();
+		textArea.setEnabled(false);
+		textArea.setEditable(false);
 
 		frame = new JFrame();
-		frame.setBounds(100, 100, 636, 300);
+		frame.setBounds(100, 100, 736, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel boutons = new JPanel();
 		frame.getContentPane().add(boutons, BorderLayout.SOUTH);
-		boutons.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		boutons.setLayout(new GridLayout(0, 1, 0, 0));
 
-		JButton btnNewButton = new JButton("Ajouter");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				arbre.ajout(textField.getText());
-				textField.setText("");
-				textArea.setText(arbre.toString());
-			}
-		});
-		boutons.add(btnNewButton);
+		Panel panel = new Panel();
+		boutons.add(panel);
 
-		JButton btnNewButton_1 = new JButton("Supprimer");
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				arbre.suppr(textField.getText());
-				textField.setText("");
-				textArea.setText(arbre.toString());
-			}
-		});
-		boutons.add(btnNewButton_1);
+		JButton btnAjouter = new JButton("Ajouter");
+		panel.add(btnAjouter);
 
-		JButton btnNewButton_2 = new JButton("Chercher");
-		btnNewButton_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				arbre.contient(textField.getText());
-				textField.setText("");
-				textArea.setText(arbre.toString());
-			}
-		});
-		boutons.add(btnNewButton_2);
+		JButton btnSupprimer = new JButton("Supprimer");
+		panel.add(btnSupprimer);
 
-		JButton btnNewButton_3 = new JButton("Prefixe");
-		btnNewButton_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				arbre.prefixe(textField.getText());
-				textField.setText("");
-				textArea.setText(arbre.toString());
-			}
-		});
-		boutons.add(btnNewButton_3);
+		JButton btnChercher = new JButton("Chercher");
+		panel.add(btnChercher);
+
+		JButton btnPrefixe = new JButton("Prefixe");
+		panel.add(btnPrefixe);
 
 		JLabel lblNewLabel = new JLabel("Quoi ?");
-		boutons.add(lblNewLabel);
+		panel.add(lblNewLabel);
+		
 
-		textField = new JTextField();
-		boutons.add(textField);
-		textField.setColumns(10);
+		texteRecherche = new JTextField();
+		panel.add(texteRecherche);
+		texteRecherche.setColumns(10);
+		btnChercher.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (arbre.contient(texteRecherche.getText())){
+					lblNewLabel_1.setText("le mot " + texteRecherche.getText() + " existe");
+				} else {
+					lblNewLabel_1.setText("le mot " + texteRecherche.getText() + " n'existe pas");
+				}
+				
+			}
+		});
+		btnPrefixe.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (arbre.prefixe(texteRecherche.getText())){
+					lblNewLabel_1.setText("le mot "+texteRecherche.getText()+" est prefixe");
+				} else {
+					lblNewLabel_1.setText("le mot "+texteRecherche.getText()+" n'est pas prefixe");
+				}
+				texteRecherche.setText("");
+				textArea.setText(arbre.toString());
+			}
+		});
+		btnSupprimer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				arbre.suppr(texteRecherche.getText());
+				texteRecherche.setText("");
+				textArea.setText(arbre.toString());
+				lblNombreDeMots.setText("Nombre de mots : " + arbre.size());
+				lblNewLabel_1.setText("Le mot a été correctement supprimé");
+			}
+		});
+		btnAjouter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				arbre.ajout(texteRecherche.getText());
+				texteRecherche.setText("");
+				textArea.setText(arbre.toString());
+				lblNombreDeMots.setText("Nombre de mots : " + arbre.size());
+				lblNewLabel_1.setText("Le mot a été correctement ajouté");
+
+			}
+		});
+
+		Panel panel_1 = new Panel();
+		boutons.add(panel_1);
+		panel_1.setLayout(new BorderLayout(0, 0));
+
+		lblNombreDeMots = new JLabel("Nombre de mots :  0");
+		panel_1.add(lblNombreDeMots);
+		
+		lblNewLabel_1 = new JLabel("");
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+		boutons.add(lblNewLabel_1);
 
 		JTabbedPane choix = new JTabbedPane(JTabbedPane.TOP);
 		frame.getContentPane().add(choix, BorderLayout.CENTER);
 
 		JPanel Arbre = new JPanel();
 		choix.addTab("Arbre", null, Arbre, null);
+		Arbre.setLayout(new BorderLayout(0, 0));
 
 		tree = new JTree();
+		tree.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		Arbre.add(tree);
+
+		/*
+		 * for (int i=0; i<4;i++){ tree.expandRow(i); }
+		 */
 
 		JPanel Liste = new JPanel();
 		Liste.setToolTipText("");
 		choix.addTab("Liste", null, Liste, null);
+		Liste.setLayout(new BorderLayout(0, 0));
 
 		textArea.setText(arbre.toString());
 		Liste.add(textArea);
@@ -147,6 +191,8 @@ public class ArbreGraphique extends ArbreLexicographique {
 				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 					arbre.charge(chooser.getSelectedFile().getAbsolutePath());
 					textArea.setText(arbre.toString());
+					lblNombreDeMots.setText("Nombre de mots : "+arbre.size());
+					lblNewLabel_1.setText("Fichier chargé");
 				}
 
 			}
@@ -164,11 +210,14 @@ public class ArbreGraphique extends ArbreLexicographique {
 
 				if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 					arbre.sauve(chooser.getSelectedFile().getAbsolutePath());
+					lblNombreDeMots.setText("Nombre de mots : " + arbre.size());
+					lblNewLabel_1.setText("Fichier correctement sauvegardé");
+
 				}
 			}
 		});
 		Fichier.add(mntmSauver);
-		
+
 		JMenuItem mntmQuitter = new JMenuItem("Quitter");
 		mntmQuitter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -193,7 +242,7 @@ public class ArbreGraphique extends ArbreLexicographique {
 			}
 		});
 		Aide.add(mntmGoogleEstTon);
-		
+
 		this.arbre = arbre;
 		arbre.setVue(tree);
 		tree.setModel(arbre);

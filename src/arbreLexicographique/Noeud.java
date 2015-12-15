@@ -3,12 +3,12 @@ package arbreLexicographique;
 public class Noeud extends NoeudAbstrait {
 
 	private char valeur;
-	private NoeudAbstrait fils;
+	NoeudAbstrait fils;
 
 	public Noeud(NoeudAbstrait frere, NoeudAbstrait fils, char valeur) {
 		super(frere);
 		if (fils == null)
-			throw new ArbreLexicographiqueException("fils ne peut pas être null");
+			throw new ArbreLexicographiqueException("fils ne peut pas ï¿½tre null");
 		this.fils = fils;
 		this.valeur = valeur;
 	}
@@ -33,8 +33,8 @@ public class Noeud extends NoeudAbstrait {
 		if (c < valeur)
 			return false;
 		if (c == valeur)
-			return fils.contient(s.substring(1));
-		return frere.contient(s);
+			return fils.prefixe(s.substring(1));
+		return frere.prefixe(s);
 	}
 
 	@Override

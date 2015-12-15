@@ -18,63 +18,68 @@ public aspect Visualisation {
 		this.vue = jt;
 	}
 
-	// -----------------------------------pointcuts et advices :--------------------------------------
+	//-------------------------------pointcuts -------------------------------
 
-	// initialisation de la racine
-	pointcut initArbreLexico(ArbreLexicographique a) : target(a) && execution(ArbreLexicographique.new());
-	after(ArbreLexicographique a) : initArbreLexico(a){
+	// modification des attributs
+	// dans un call, this est le this qui fait appel à la méthode
+	// dans un execution, this est le this qui exécute le code
+
+	// construction d'un l'arbre
+	pointcut initArbre(ArbreLexicographique a) : target(a) && execution(ArbreLexicographique.new()); 
+
+	// ajout ou suppression dans l'arbre
+	pointcut modifArbre(ArbreLexicographique a) : target(a) && ( 
+			execution(boolean ArbreLexicographique.ajout(String)) || execution(boolean ArbreLexicographique.suppr(String)));
+
+	// construction d'un NoeudAbstrait
+	pointcut initNoeudAbstrait(NoeudAbstrait n) : target(n) && execution(NoeudAbstrait.new(NoeudAbstrait)); 
+
+	// construction d'un Noeud
+	pointcut initNoeud(Noeud n, NoeudAbstrait frere, NoeudAbstrait fils, char val) : target(n) && args(frere, fils, val) && execution(Noeud.new(NoeudAbstrait, NoeudAbstrait, char));
+
+	// modification de l'attribut fils
+	pointcut modifFils(Noeud n, NoeudAbstrait n1) : this(n) && target(n1) && set(NoeudAbstrait Noeud.fils);
+		
+	// modification d'un frere
+	pointcut modifFrere(Noeud n, NoeudAbstrait n1) : this(n) && target(n1) && set(NoeudAbstrait Noeud.frere);
+	
+	// ----------------------------advices--------------------------------------
+	
+	// le treeModel est initialisé après l'arbre
+	after(ArbreLexicographique a) : initArbre(a){
 		a.treeModel = new DefaultTreeModel(a.entree.treeNode);
 	}
-	
-	//Modification de la racine lors de l'ajout et de la suppression
-	pointcut modifArbreLexico(ArbreLexicographique a) : target(a) && (
-		execution(boolean ArbreLexicographique.ajout(String)) || 
-		execution(boolean ArbreLexicographique.suppr(String))
-	);
-	after(ArbreLexicographique a) : modifArbreLexico(a){
+
+	// modification de la racine après ajout ou suppression
+	after(ArbreLexicographique a) : modifArbre(a){
 		a.treeModel.setRoot(a.entree.treeNode);
 	}
-	
-	//initialisation d'un noeud abstrait
-	pointcut initNoeudAbstrait(NoeudAbstrait n) : target(n) && execution(NoeudAbstrait.new(NoeudAbstrait));
-	before(NoeudAbstrait n) : initNoeudAbstrait(n){
+
+	// création d'un treeNode après l'instanciation d'un noeud abstrait
+	after(NoeudAbstrait n) : initNoeudAbstrait(n){
 		n.treeNode = new DefaultMutableTreeNode();
 	}
-	
-	//ajout de lettres
-	pointcut ajoutLettre(Noeud n, NoeudAbstrait frere, NoeudAbstrait fils, char val) : target(n) && args(frere, fils, val) && execution(Noeud.new(NoeudAbstrait, NoeudAbstrait, char));
-	after(Noeud n, NoeudAbstrait frere, NoeudAbstrait fils, char val) : ajoutLettre(n, frere,  fils,  val){
+
+	// création d'un treeNode pour chaque Noeud instancié
+	after(Noeud n, NoeudAbstrait frere, NoeudAbstrait fils, char val) : initNoeud(n, frere,  fils,  val){
 		n.treeNode = new DefaultMutableTreeNode(val);
-		n.treeNode.add(fils.treeNode);		
-	}
-	
-	
-	
-	after(Noeud n, String s) returning(NoeudAbstrait n1): target(n) && args(s) && execution(NoeudAbstrait Noeud.ajout(String)){
-		System.out.println();
-	}
-	
-	pointcut modifFils(Noeud n, NoeudAbstrait n1) : this(n) && target(n1) && set(NoeudAbstrait Noeud.fils);
-	after(Noeud n, NoeudAbstrait n1) : modifFils(n, n1){
-		System.out.println();
-	}
-	
-	pointcut ajoutsurMarque(Marque m, String s) : target(m) && args(s) && execution(NoeudAbstrait Marque.ajout(String));
-	after(Marque m, String s) : ajoutsurMarque(m, s){
-		
-	}
-	
-	private boolean contient(TreeNode treeNode, Noeud n){
-		Enumeration e = treeNode.children();
-		MutableTreeNode m;
-		while(e.hasMoreElements()){
-			m = (MutableTreeNode) e.nextElement();
-			if(m.equals(n)) return true;
-		}
-		return false;
+		n.treeNode.add(fils.treeNode);
+		n.treeNode.add(frere.treeNode);
 	}
 
-	//------------------------------------ interface TreeModel :-----------------------------------------
+	// ajout des fils aux treeNodes
+	after(Noeud n, NoeudAbstrait n1) : modifFils(n, n1){
+		n.treeNode.add(n.fils.treeNode);
+	}
+	
+	// ajout des freres aux treeNodes
+	after(Noeud n, NoeudAbstrait n1) : modifFrere(n, n1){
+		n.treeNode.add(n.frere.treeNode);
+		System.out.println("coucou");
+	}
+
+	// ------------------------------------ interface TreeModel
+	// :-----------------------------------------
 	public Object ArbreLexicographique.getRoot() {
 		return treeModel.getRoot();
 	}
@@ -109,7 +114,8 @@ public aspect Visualisation {
 		treeModel.addTreeModelListener(l);
 	}
 
-	// ---------------------------------------interface TreeNode :--------------------------------------
+	// ---------------------------------------interface TreeNode
+	// :--------------------------------------
 	public Enumeration NoeudAbstrait.children() {
 		return treeNode.children();
 	}
