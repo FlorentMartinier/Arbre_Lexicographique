@@ -12,7 +12,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
-import java.awt.FlowLayout;
 import javax.swing.JTabbedPane;
 import java.awt.TextArea;
 import javax.swing.JMenu;
@@ -21,7 +20,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.BevelBorder;
-import java.awt.TextField;
 import java.awt.Panel;
 import java.awt.GridLayout;
 import javax.swing.SwingConstants;
@@ -30,7 +28,7 @@ public class ArbreGraphique extends ArbreLexicographique {
 
 	JFrame frame;
 	private JTextField texteRecherche;
-	private ArbreLexicographique arbre;
+	private ArbreLexicographique arbre = new ArbreLexicographique();
 	private JTree tree;
 	private JLabel lblNombreDeMots;
 	private JLabel lblNewLabel_1;
@@ -42,7 +40,7 @@ public class ArbreGraphique extends ArbreLexicographique {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ArbreGraphique window = new ArbreGraphique(new ArbreLexicographique());
+					ArbreGraphique window = new ArbreGraphique();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -54,15 +52,16 @@ public class ArbreGraphique extends ArbreLexicographique {
 	/**
 	 * Create the application.
 	 */
-	public ArbreGraphique(ArbreLexicographique arbre) {
-		initialize(arbre);
+	public ArbreGraphique() {
+		initialize();
+		arbre.setVue(tree);
+		tree.setModel(arbre);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(ArbreLexicographique arbre) {
-		this.arbre = arbre;
+	private void initialize() {
 
 		TextArea textArea = new TextArea();
 		textArea.setEnabled(false);
@@ -243,8 +242,7 @@ public class ArbreGraphique extends ArbreLexicographique {
 		});
 		Aide.add(mntmGoogleEstTon);
 
-		this.arbre = arbre;
-		arbre.setVue(tree);
-		tree.setModel(arbre);
+		
+		tree.revalidate();
 	}
 }

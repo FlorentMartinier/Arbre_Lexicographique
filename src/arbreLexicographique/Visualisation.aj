@@ -41,13 +41,14 @@ public aspect Visualisation {
 	pointcut modifFils(Noeud n, NoeudAbstrait n1) : this(n) && target(n1) && set(NoeudAbstrait Noeud.fils);
 		
 	// modification d'un frere
-	pointcut modifFrere(Noeud n, NoeudAbstrait n1) : this(n) && target(n1) && set(NoeudAbstrait Noeud.frere);
+	pointcut modifFrere(NoeudAbstrait n, NoeudAbstrait nouveauFrere) :
+		target(n) && set(NoeudAbstrait NoeudAbstrait.frere) && args(nouveauFrere) && withincode(NoeudAbstrait NoeudAbstrait+.ajout(String));
 	
 	// ----------------------------advices--------------------------------------
 	
 	// le treeModel est initialisé après l'arbre
 	after(ArbreLexicographique a) : initArbre(a){
-		a.treeModel = new DefaultTreeModel(a.entree.treeNode);
+		a.treeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
 	}
 
 	// modification de la racine après ajout ou suppression
@@ -73,9 +74,10 @@ public aspect Visualisation {
 	}
 	
 	// ajout des freres aux treeNodes
-	after(Noeud n, NoeudAbstrait n1) : modifFrere(n, n1){
-		n.treeNode.add(n.frere.treeNode);
-		System.out.println("coucou");
+	after(NoeudAbstrait n, NoeudAbstrait nf) : modifFrere(n, nf){
+		if(n.getParent() != null){
+			((MutableTreeNode) n.treeNode.getParent()).insert(nf.treeNode,0);
+		}
 	}
 
 	// ------------------------------------ interface TreeModel
