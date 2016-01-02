@@ -24,7 +24,7 @@ import java.awt.Panel;
 import java.awt.GridLayout;
 import javax.swing.SwingConstants;
 
-public class ArbreGraphique extends ArbreLexicographique {
+public class Interface extends ArbreLexicographique {
 
 	JFrame frame;
 	private JTextField texteRecherche;
@@ -33,14 +33,11 @@ public class ArbreGraphique extends ArbreLexicographique {
 	private JLabel lblNombreDeMots;
 	private JLabel lblNewLabel_1;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ArbreGraphique window = new ArbreGraphique();
+					Interface window = new Interface();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -49,18 +46,12 @@ public class ArbreGraphique extends ArbreLexicographique {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
-	public ArbreGraphique() {
+	public Interface() {
 		initialize();
 		arbre.setVue(tree);
 		tree.setModel(arbre);
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 
 		TextArea textArea = new TextArea();
@@ -160,10 +151,6 @@ public class ArbreGraphique extends ArbreLexicographique {
 		tree.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		Arbre.add(tree);
 
-		/*
-		 * for (int i=0; i<4;i++){ tree.expandRow(i); }
-		 */
-
 		JPanel Liste = new JPanel();
 		Liste.setToolTipText("");
 		choix.addTab("Liste", null, Liste, null);
@@ -241,7 +228,6 @@ public class ArbreGraphique extends ArbreLexicographique {
 			}
 		});
 		Aide.add(mntmGoogleEstTon);
-
 		
 		tree.revalidate();
 	}

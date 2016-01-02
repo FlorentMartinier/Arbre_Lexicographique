@@ -1,9 +1,5 @@
 package arbreLexicographique;
 
-import java.util.Enumeration;
-
-import javax.swing.tree.TreeNode;
-
 public class Marque extends NoeudAbstrait {
 
 	public Marque(NoeudAbstrait frere) {

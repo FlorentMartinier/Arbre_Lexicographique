@@ -89,10 +89,4 @@ public class Noeud extends NoeudAbstrait {
 		String res = fils.toString(chemin + valeur);
 		return res + frere.toString(chemin);
 	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

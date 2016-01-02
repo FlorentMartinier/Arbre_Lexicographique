@@ -20,10 +20,6 @@ public aspect Visualisation {
 
 	//-------------------------------pointcuts -------------------------------
 
-	// modification des attributs
-	// dans un call, this est le this qui fait appel à la méthode
-	// dans un execution, this est le this qui exécute le code
-
 	// construction d'un l'arbre
 	pointcut initArbre(ArbreLexicographique a) : target(a) && execution(ArbreLexicographique.new()); 
 
@@ -80,8 +76,7 @@ public aspect Visualisation {
 		}
 	}
 
-	// ------------------------------------ interface TreeModel
-	// :-----------------------------------------
+	// ------------------------------------ interface TreeModel---------------------------------------
 	public Object ArbreLexicographique.getRoot() {
 		return treeModel.getRoot();
 	}
@@ -116,8 +111,7 @@ public aspect Visualisation {
 		treeModel.addTreeModelListener(l);
 	}
 
-	// ---------------------------------------interface TreeNode
-	// :--------------------------------------
+	// ---------------------------------------interface TreeNode-----------------------------------
 	public Enumeration NoeudAbstrait.children() {
 		return treeNode.children();
 	}
